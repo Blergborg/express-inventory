@@ -6,7 +6,7 @@ const { body, validationResult } = require("express-validator");
 // Display list of all Category
 exports.category_list = function (req, res, next) {
   Category.find()
-    .sort([["name", "descending"]])
+    .sort({name: 1})
     .exec(function (err, list_categories) {
       if (err) {
         return next(err);
@@ -27,7 +27,7 @@ exports.category_detail = function (req, res, next) {
         Category.findById(req.params.id).exec(callback);
       },
       category_items: function (callback) {
-        Item.find({ category: req.params.id }, "name description").exec(callback);
+        Item.find({ category: req.params.id }, "name description price").exec(callback);
       },
     },
     function (err, results) {
@@ -42,7 +42,7 @@ exports.category_detail = function (req, res, next) {
       }
       // Successful, so render
       res.render("category_detail", {
-        title: "Category Detail",
+        title: results.category.name,
         category: results.category,
         category_items: results.category_items,
       });
